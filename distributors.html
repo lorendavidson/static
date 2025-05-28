@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    async function fetchContactDetails(name) {
+      const response = await fetch('https://script.google.com/macros/s/your-script-id/exec', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'name=' + encodeURIComponent(name)
+      });
+
+      const data = await response.json();
+      if (data.street) {
+        parent.document.querySelector("[name='q3_street']").value = data.street;
+        parent.document.querySelector("[name='q4_city']").value = data.city;
+        parent.document.querySelector("[name='q5_state']").value = data.state;
+        parent.document.querySelector("[name='q6_zip']").value = data.zip;
+      }
+    }
+
+    function setupListener() {
+      const contactInput = parent.document.querySelector("[name='q1_contact']");
+      if (contactInput) {
+        contactInput.addEventListener('change', (e) => {
+          fetchContactDetails(e.target.value);
+        });
+      }
+    }
+
+    window.addEventListener('load', () => {
+      setTimeout(setupListener, 1000); // wait for Jotform DOM
+    });
+  </script>
+</head>
+<body>
+  <p>Loading contact integration...</p>
+</body>
+</html>
