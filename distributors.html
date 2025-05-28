@@ -2,37 +2,37 @@
 <html>
 <head>
   <script>
-    async function fetchContactDetails(name) {
-      const response = await fetch('https://script.google.com/macros/s/your-script-id/exec', {
+    function fetchDetails(name) {
+      const url = 'https://script.google.com/macros/s/AKfycbxAhV0TXik7FsftVLezoiZZLGgepIExS2IBEaA4itm48146_kXJfRdZWBroZZ_A7YqIaA/exec';
+      fetch(url, {
         method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'name=' + encodeURIComponent(name)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.name && data.email) {
+          const parentDoc = window.parent.document;
+          parentDoc.querySelector("input[name='wholesaleDistributorName']").value = data.name;
+          parentDoc.querySelector("input[name='wholesaleDistributorEmail']").value = data.email;
+        }
       });
-
-      const data = await response.json();
-      if (data.street) {
-        parent.document.querySelector("[name='q3_street']").value = data.street;
-        parent.document.querySelector("[name='q4_city']").value = data.city;
-        parent.document.querySelector("[name='q5_state']").value = data.state;
-        parent.document.querySelector("[name='q6_zip']").value = data.zip;
-      }
     }
 
-    function setupListener() {
-      const contactInput = parent.document.querySelector("[name='q1_contact']");
-      if (contactInput) {
-        contactInput.addEventListener('change', (e) => {
-          fetchContactDetails(e.target.value);
+    function watchDropdown() {
+      const parentDoc = window.parent.document;
+      const dropdown = parentDoc.querySelector("select[name='wholesaleDistributors']");
+      if (dropdown) {
+        dropdown.addEventListener('change', () => {
+          fetchDetails(dropdown.value);
         });
       }
     }
 
-    window.addEventListener('load', () => {
-      setTimeout(setupListener, 1000); // wait for Jotform DOM
-    });
+    window.onload = () => setTimeout(watchDropdown, 1000);
   </script>
 </head>
 <body>
-  <p>Loading contact integration...</p>
+  <p>Initializing distributor auto-fill…</p>
 </body>
 </html>
