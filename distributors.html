@@ -2,39 +2,47 @@
 <html>
 <head>
   <script>
-    function fetchDetails(name) {
-      console.log('fetchDetails!', name);
-      const url = 'https://script.google.com/macros/s/AKfycbxAhV0TXik7FsftVLezoiZZLGgepIExS2IBEaA4itm48146_kXJfRdZWBroZZ_A7YqIaA/exec';
+    function fetchData(name) {
+      console.log('fetchData!', name);
+      const url = "https://script.google.com/macros/s/AKfycbzQWLEIFdr86m53shroebmh5h4f9hEE7vp2_pNcpJvXH1uyp5rhXwXPhWDY0FrD8cygtQ/exec";
+
       fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'name=' + encodeURIComponent(name)
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `name=${encodeURIComponent(name)}`
       })
       .then(res => res.json())
       .then(data => {
         if (data.name && data.email) {
-          const parentDoc = window.parent.document;
-          parentDoc.querySelector("input[name='wholesaleDistributorName']").value = data.name;
-          parentDoc.querySelector("input[name='wholesaleDistributorEmail']").value = data.email;
+          const doc = window.parent.document;
+          const nameField = doc.querySelector("input[name='wholesaleDistributorName']");
+          const emailField = doc.querySelector("input[name='wholesaleDistributorEmail']");
+          if (nameField) nameField.value = data.name;
+          if (emailField) emailField.value = data.email;
         }
       });
     }
 
-    function watchDropdown() {
-      const parentDoc = window.parent.document;
-      const dropdown = parentDoc.querySelector("select[name='wholesaleDistributors']");
+    function listenToDropdown() {
+      const doc = window.parent.document;
+      const dropdown = doc.querySelector("select[name='wholesaleDistributors']");
       if (dropdown) {
         console.log('Dropdown!', dropdown);
-        dropdown.addEventListener('change', () => {
-          fetchDetails(dropdown.value);
+        dropdown.addEventListener("change", () => {
+          const value = dropdown.value;
+          if (value && value !== "Please Select") {
+            fetchData(value);
+          }
         });
       }
     }
 
-    window.onload = () => setTimeout(watchDropdown, 1000);
+    window.addEventListener("load", () => {
+      setTimeout(listenToDropdown, 1000);
+    });
   </script>
 </head>
 <body>
-  <p>Initializing distributor auto-fill…</p>
+  <p style="font-family:sans-serif;font-size:12px;">Auto-fill is active</p>
 </body>
 </html>
