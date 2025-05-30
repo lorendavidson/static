@@ -1,14 +1,24 @@
-const raw = window.parent.document.querySelector('.form-html pre').innerText;
-const contacts = JSON.parse(raw);
-
-console.log('Contacts found!', contacts);
-
-const dropdown = window.parent.document.querySelector("select[name='wholesaleDistributors']");
-dropdown.addEventListener('change', () => {
-  const dist = contacts[dropdown.value];
-  console.log(dropdown, dist);
-  if (dist) {
-    window.parent.document.querySelector("input[name='wholesaleDistributorName']").value = dist.name;
-    window.parent.document.querySelector("input[name='wholesaleDistributorEmail']").value = dist.email;
-  }
-});
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    const raw = window.parent.document.querySelector('.form-html pre').innerText;
+    const contacts = JSON.parse(raw);
+    
+    console.log('Contacts found!', contacts);
+    
+    const dropdown = window.parent.document.querySelector("select[name='wholesaleDistributors']");
+    dropdown.addEventListener('change', () => {
+      const dist = contacts[dropdown.value];
+      console.log(dropdown, dist);
+      if (dist) {
+        window.parent.document.querySelector("input[name='wholesaleDistributorName']").value = dist.name;
+        window.parent.document.querySelector("input[name='wholesaleDistributorEmail']").value = dist.email;
+      }
+    });
+  </script>
+</head>
+<body style="margin:0;">
+  <p style="font-family:sans-serif;font-size:12px;">Auto-fill is active!</p>
+</body>
+</html>
