@@ -2,23 +2,47 @@
 <html>
 <head>
   <script>
-    const raw = window.parent.document.querySelector('.form-html pre').innerText;
-    const contacts = JSON.parse(raw);
-    
-    console.log('Contacts found!', contacts);
-    
-    const dropdown = window.parent.document.querySelector("select[name='wholesaleDistributors']");
-    dropdown.addEventListener('change', () => {
-      const dist = contacts[dropdown.value];
-      console.log(dropdown, dist);
-      if (dist) {
-        window.parent.document.querySelector("input[name='wholesaleDistributorName']").value = dist.name;
-        window.parent.document.querySelector("input[name='wholesaleDistributorEmail']").value = dist.email;
+    function fetchData(name) {
+      console.log('fetchData!', name);
+      const url = "https://script.google.com/macros/s/AKfycbzQWLEIFdr86m53shroebmh5h4f9hEE7vp2_pNcpJvXH1uyp5rhXwXPhWDY0FrD8cygtQ/exec";
+
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `name=${encodeURIComponent(name)}`
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.name && data.email) {
+          const doc = window.parent.document;
+          const nameField = doc.querySelector("input[name='wholesaleDistributorName']");
+          const emailField = doc.querySelector("input[name='wholesaleDistributorEmail']");
+          if (nameField) nameField.value = data.name;
+          if (emailField) emailField.value = data.email;
+        }
+      });
+    }
+
+    function listenToDropdown() {
+      const doc = window.parent.document;
+      const dropdown = doc.querySelector("select[name='wholesaleDistributors']");
+      if (dropdown) {
+        console.log('Dropdown!', dropdown);
+        dropdown.addEventListener("change", () => {
+          const value = dropdown.value;
+          if (value && value !== "Please Select") {
+            fetchData(value);
+          }
+        });
       }
+    }
+
+    window.addEventListener("load", () => {
+      setTimeout(listenToDropdown, 1000);
     });
   </script>
 </head>
-<body style="margin:0;">
-  <p style="font-family:sans-serif;font-size:12px;">Auto-fill is active!</p>
+<body style="margin:0;padding:0;">
+  <p style="font-family:sans-serif;font-size:12px;margin:0;padding:0;">Auto-fill is active...</p>
 </body>
 </html>
