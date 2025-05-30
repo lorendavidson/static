@@ -3,6 +3,7 @@
 <head>
   <script>
     function fetchDetails(name) {
+      console.log('fetchDetails!', name);
       const url = 'https://script.google.com/macros/s/AKfycbxAhV0TXik7FsftVLezoiZZLGgepIExS2IBEaA4itm48146_kXJfRdZWBroZZ_A7YqIaA/exec';
       fetch(url, {
         method: 'POST',
@@ -23,6 +24,7 @@
       const parentDoc = window.parent.document;
       const dropdown = parentDoc.querySelector("select[name='wholesaleDistributors']");
       if (dropdown) {
+        console.log('Dropdown!', dropdown);
         dropdown.addEventListener('change', () => {
           fetchDetails(dropdown.value);
         });
