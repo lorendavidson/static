@@ -1,42 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <title>Distributor Autofill</title>
   <script>
-    function fetchDistributorData(name) {
-      const url = "https://script.google.com/macros/s/AKfycbzzmyMf-UvuYAcSjWldkfPkqDec9INnhV3rnKYEOEl2ClUFy1BiCy6Z_BHiwQw-KnXf-g/exec"; // Replace with your deployed script URL
+    async function onDistributorChange(e) {
+      const distributorID = e.target.value;
+      if (!distributorID) return;
 
-      fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `name=${encodeURIComponent(name)}`
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data && !data.error) {
-          const doc = window.parent.document;
-          doc.querySelector("input[name='wholesaleDistributorName']").value = data.name;
-          doc.querySelector("input[name='wholesaleDistributorName']").value = data.email;
-        }
-      });
+      const response = await fetch(`https://script.google.com/macros/s/YOUR_DEPLOYED_WEBAPP_ID/exec?id=${distributorID}`);
+      const data = await response.json();
+
+      if (window.parent) {
+        window.parent.postMessage({
+          type: 'prefillDistributor',
+          payload: data
+        }, '*');
+      }
     }
 
-    function init() {
-      const doc = window.parent.document;
-      const dropdown = doc.querySelector("select[name='wholesaleDistributors']");
-      if (!dropdown) return;
-
-      dropdown.addEventListener("change", () => {
-        const selected = dropdown.value;
-        if (selected && selected !== "Please Select") {
-          fetchDistributorData(selected);
-        }
-      });
+    function loadDropdown() {
+      fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_WEBAPP_ID/exec?list=1")
+        .then(res => res.json())
+        .then(distributors => {
+          const select = document.getElementById("distributorSelect");
+          distributors.forEach(d => {
+            const option = document.createElement("option");
+            option.value = d.ID;
+            option.textContent = d.Name;
+            select.appendChild(option);
+          });
+        });
     }
 
-    window.addEventListener("load", () => setTimeout(init, 1000));
+    window.addEventListener("DOMContentLoaded", () => {
+      loadDropdown();
+      document.getElementById("distributorSelect").addEventListener("change", onDistributorChange);
+    });
+
+    window.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "debug") {
+        console.log("Debug from parent:", event.data.payload);
+      }
+    });
   </script>
 </head>
-<body style="margin:0;padding:0;">
-  <p style="font-family:sans-serif;font-size:12px;margin:0;padding:0;">Auto-fill enabled!</p>
+<body>
+  <label for="distributorSelect">Choose a Distributor:</label>
+  <select id="distributorSelect">
+    <option value="">-- Select --</option>
+  </select>
+
+  <script>
+    window.addEventListener("message", function(event) {
+      if (event.data?.type === "prefillDistributor") {
+        const { Name, Email } = event.data.payload;
+        const iframe = parent.document;
+
+        try {
+          const nameField = iframe.querySelector("input[name='wholesaleDistributorName']");
+          const emailField = iframe.querySelector("input[name='wholesaleDistributorEmail']");
+
+          if (nameField) nameField.value = Name;
+          if (emailField) emailField.value = Email;
+        } catch (err) {
+          console.error("Error accessing parent form fields:", err);
+        }
+      }
+    });
+  </script>
 </body>
 </html>
