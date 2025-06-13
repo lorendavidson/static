@@ -8,7 +8,7 @@
       const distributorID = e.target.value;
       if (!distributorID) return;
 
-      const response = await fetch(`https://script.google.com/macros/s/AKfycby5q-x9Kh2QjMVrH8QjbaUxVsWsM5hUHm6J6GaKt6NHHKsI8xxe3x3_RBrLFhd0yB5RSA/exec?id=${distributorID}`);
+      const response = await fetch(`https://script.google.com/macros/s/AKfycbwi0wzpZWvnULord9Iz0Cjg29MA_8b3xck_nYLIwrPY6-5S40ieIHUaYgCgzKMkvhQk/exec?id=${distributorID}`);
       const data = await response.json();
 
       if (window.parent) {
@@ -20,7 +20,7 @@
     }
 
     function loadDropdown() {
-      fetch("https://script.google.com/macros/s/AKfycby5q-x9Kh2QjMVrH8QjbaUxVsWsM5hUHm6J6GaKt6NHHKsI8xxe3x3_RBrLFhd0yB5RSA/exec?list=1")
+      fetch("https://script.google.com/macros/s/AKfycbwi0wzpZWvnULord9Iz0Cjg29MA_8b3xck_nYLIwrPY6-5S40ieIHUaYgCgzKMkvhQk/exec?list=1")
         .then(res => res.json())
         .then(distributors => {
           const select = document.getElementById("distributorSelect");
