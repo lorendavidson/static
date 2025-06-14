@@ -5,8 +5,8 @@
   <title>Distributor Autofill</title>
   <script>
     async function onDistributorChange(e) {
-      const distributorID = e.target.value;
-      if (!distributorID) return;
+      const distributorRow = e.target.value;
+      if (!distributorRow) return;
 
       const response = await fetch(`https://script.google.com/macros/s/AKfycbxgdsoYu6Mlbiin53yjIcxYNiVSULXu5vsBvKwsvhz4_1LZd_tpq-F2lqhwB7hSr9rnBA/exec?row=${distributorRow}`);
       const data = await response.json();
