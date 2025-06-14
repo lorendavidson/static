@@ -11,6 +11,7 @@
       const response = await fetch(`https://script.google.com/macros/s/AKfycbxgdsoYu6Mlbiin53yjIcxYNiVSULXu5vsBvKwsvhz4_1LZd_tpq-F2lqhwB7hSr9rnBA/exec?row=${distributorRow}`);
       const data = await response.json();
 
+      // Communicate back to Jotform parent
       if (window.parent) {
         window.parent.postMessage({
           type: 'prefillDistributor',
@@ -37,12 +38,6 @@
       loadDropdown();
       document.getElementById("distributorSelect").addEventListener("change", onDistributorChange);
     });
-
-    window.addEventListener("message", (event) => {
-      if (event.data && event.data.type === "debug") {
-        console.log("Debug from parent:", event.data.payload);
-      }
-    });
   </script>
 </head>
 <body style="margin:0;padding:0;color:#455A64;font-family:sans-serif;">
@@ -50,24 +45,5 @@
   <select id="distributorSelect">
     <option value="">-- Select --</option>
   </select>
-
-  <script>
-    window.addEventListener("message", function(event) {
-      if (event.data?.type === "prefillDistributor") {
-        const { Name, Email } = event.data.payload;
-        const iframe = parent.document;
-
-        try {
-          const nameField = iframe.querySelector("input[name='wholesaleDistributorName']");
-          const emailField = iframe.querySelector("input[name='wholesaleDistributorEmail']");
-
-          if (nameField) nameField.value = Name;
-          if (emailField) emailField.value = Email;
-        } catch (err) {
-          console.error("Error accessing parent form fields:", err);
-        }
-      }
-    });
-  </script>
 </body>
 </html>
