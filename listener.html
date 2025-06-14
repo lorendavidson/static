@@ -3,7 +3,9 @@
 <head><meta charset="UTF-8"><title>Distributor Autofill Listener</title></head>
 <body>
 <script>
+  console.log('Listener added...');
   window.addEventListener("message", function(event) {
+    console.log(event.data);
     if (event.data?.type === "prefillDistributor") {
       const { Name, Email } = event.data.payload;
       try {
