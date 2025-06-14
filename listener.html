@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Distributor Autofill Listener</title></head>
+<body>
+<script>
+  window.addEventListener("message", function(event) {
+    if (event.data?.type === "prefillDistributor") {
+      const { Name, Email } = event.data.payload;
+      try {
+        const parentDoc = window.parent.document;
+        const nameField = parentDoc.querySelector("input[name='wholesaleDistributorName']");
+        const emailField = parentDoc.querySelector("input[name='wholesaleDistributorEmail']");
+        if (nameField) nameField.value = Name;
+        if (emailField) emailField.value = Email;
+      } catch (err) {
+        console.error("Error accessing parent form fields:", err);
+      }
+    }
+  });
+</script>
+</body>
+</html>
